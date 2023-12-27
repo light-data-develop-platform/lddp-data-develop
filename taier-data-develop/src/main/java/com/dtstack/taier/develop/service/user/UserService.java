@@ -22,6 +22,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.dtstack.taier.common.enums.Deleted;
+import com.dtstack.taier.common.exception.TaierDefineException;
 import com.dtstack.taier.common.http.PoolHttpClient;
 import com.dtstack.taier.dao.domain.User;
 import com.dtstack.taier.dao.dto.UserDTO;
@@ -94,6 +95,9 @@ public class UserService extends ServiceImpl<UserMapper, User> {
     }
 
     public User userConvert(JSONObject data){
+        if (!Objects.equals(data.getIntValue("code"), 200)){
+            throw new TaierDefineException("token校验失败");
+        }
         JSONObject object= data.getJSONObject("data").getJSONObject("user");
         Long userId = object.getLongValue("userId");
         User user = getById(userId);
