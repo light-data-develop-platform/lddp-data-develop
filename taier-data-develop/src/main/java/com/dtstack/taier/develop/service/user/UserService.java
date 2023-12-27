@@ -18,9 +18,12 @@
 
 package com.dtstack.taier.develop.service.user;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.dtstack.taier.common.enums.Deleted;
+import com.dtstack.taier.common.exception.TaierDefineException;
+import com.dtstack.taier.common.http.PoolHttpClient;
 import com.dtstack.taier.dao.domain.User;
 import com.dtstack.taier.dao.dto.UserDTO;
 import com.dtstack.taier.dao.mapper.UserMapper;
@@ -80,4 +83,36 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         BeanUtils.copyProperties(one, userDTO);
         return userDTO;
     }
+
+    public User getUserByToken(String token, String clientId) {
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("Authorization", "Bearer " + token);
+        headers.put("Clientid", clientId);
+        String result = PoolHttpClient.get("http://localhost:8080/system/user/getInfo", null, headers, true);
+        JSONObject data = JSONObject.parseObject(result);
+        return userConvert(data);
+    }
+
+    public User userConvert(JSONObject data){
+        if (!Objects.equals(data.getIntValue("code"), 200)){
+            throw new TaierDefineException("token校验失败");
+        }
+        JSONObject object= data.getJSONObject("data").getJSONObject("user");
+        Long userId = object.getLongValue("userId");
+        User user = getById(userId);
+        String username = object.getString("userName") + "@lddp.com";
+        if (user == null) {
+            user = new User();
+            user.setId(userId);
+            user.setUserName(username);
+            user.setPhoneNumber(object.getString("phonenumber"));
+            user.setEmail(username);
+            user.setPassword("0192023A7BBD73250516F069DF18B500");
+            this.baseMapper.insert(user);
+            user = getById(userId);
+        }
+
+        return user;
+    }
+
 }
