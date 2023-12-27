@@ -23,7 +23,7 @@ package com.dtstack.taier.common.constant;
  * @date 2021-08-03
  */
 public interface Cookies {
-    String TOKEN = "token";
+    String TOKEN = "taier_token";
 
     String USER_NAME = "username";
     String TENANT_NAME = "tenant_name";

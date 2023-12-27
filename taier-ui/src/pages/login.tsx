@@ -50,7 +50,7 @@ export function showLoginModal() {
 
 export default () => {
     const [curTenantId] = useState(getTenantId());
-    const [isLogin, setLogin] = useState(() => !!getCookie('token'));
+    const [isLogin, setLogin] = useState(() => !!getCookie('taier_token'));
     const [isModalVisible, setVisible] = useState(false);
     const [submitLoading, setLoading] = useState(false);
     const [form] = Form.useForm<IFormField>();
