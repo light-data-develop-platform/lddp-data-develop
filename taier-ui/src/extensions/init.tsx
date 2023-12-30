@@ -262,10 +262,6 @@ function initializePane() {
  * 初始化 MenuBar
  */
 function initMenuBar() {
-    molecule.menuBar.setState({
-        logo: <Logo />,
-    });
-    molecule.layout.setMenuBarMode('horizontal');
     const state = molecule.menuBar.getState();
     const nextData = state.data.concat();
     nextData.splice(1, 0, {
