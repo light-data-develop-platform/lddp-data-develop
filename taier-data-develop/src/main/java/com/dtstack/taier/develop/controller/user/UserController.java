@@ -139,15 +139,15 @@ public class UserController {
     }
 
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST}, value = "/loginByToken")
-    public void loginByToken(@RequestParam(value = "token") String accessToken, @RequestParam(value = "clientId") String clientId, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (StringUtils.isBlank(accessToken)) {
+    public void loginByToken(@RequestParam(value = "lddpToken") String lddpToken, @RequestParam(value = "clientId") String clientId, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        if (StringUtils.isBlank(lddpToken)) {
             throw new TaierDefineException("token can not null");
         }
         if (StringUtils.isBlank(clientId)) {
             throw new TaierDefineException("clientId can not null");
         }
 
-        User user = userService.getUserByToken(accessToken, clientId);
+        User user = userService.getUserByToken(lddpToken, clientId);
 
         if (null == user) {
             throw new TaierDefineException(ErrorCode.USER_IS_NULL);
