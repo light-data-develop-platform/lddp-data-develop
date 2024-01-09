@@ -62,15 +62,15 @@ interface IBasic {
      * 隐藏后仍然会收集值
      */
     hidden?:
-        | boolean
-        | {
-              field: string;
-              value: string | boolean | number;
-              /**
-               * 是否取反
-               */
-              isNot?: boolean;
-          }[];
+    | boolean
+    | {
+        field: string;
+        value: string | boolean | number;
+        /**
+         * 是否取反
+         */
+        isNot?: boolean;
+    }[];
     /**
      * 是否必选
      */
@@ -271,7 +271,7 @@ export default connect(molecule.editor, ({ current }: molecule.model.IEditor) =>
     };
 
     const renderContent = (data: ISchema, prefix?: string[]) => {
-        switch (data.type) {
+        switch (data?.type) {
             case 'object': {
                 return (
                     <Collapse className="taier__dataSync__collapse" defaultActiveKey={[data.name]} key={data.title}>
@@ -318,13 +318,13 @@ export default connect(molecule.editor, ({ current }: molecule.model.IEditor) =>
 
                             const hidden = Array.isArray(data.hidden)
                                 ? data.hidden
-                                      .map((item) => {
-                                          const value = get({ form: values }, item.field);
-                                          const isEqual = item.value.toString()?.split(',').includes(`${value}`);
+                                    .map((item) => {
+                                        const value = get({ form: values }, item.field);
+                                        const isEqual = item.value.toString()?.split(',').includes(`${value}`);
 
-                                          return item.isNot ? !isEqual : isEqual;
-                                      })
-                                      .some(Boolean)
+                                        return item.isNot ? !isEqual : isEqual;
+                                    })
+                                    .some(Boolean)
                                 : data.hidden;
 
                             const rules: Rule[] = [];
@@ -373,9 +373,9 @@ export default connect(molecule.editor, ({ current }: molecule.model.IEditor) =>
             const targetMap = data.targetMap ? pickByTruly(data.targetMap) : undefined;
             const settingMap = data.settingMap
                 ? pickByTruly({
-                      ...data.settingMap,
-                      speed: data.settingMap?.speed === '-1' ? '不限制传输速率' : data.settingMap?.speed,
-                  })
+                    ...data.settingMap,
+                    speed: data.settingMap?.speed === '-1' ? '不限制传输速率' : data.settingMap?.speed,
+                })
                 : {};
             const sourceMap = pickByTruly(data.sourceMap);
 
@@ -461,7 +461,15 @@ export default connect(molecule.editor, ({ current }: molecule.model.IEditor) =>
                         form={form}
                         autoComplete="off"
                     >
-                        {templateSchema.children.map((child) => renderContent(child))}
+                        <div style={{ display: 'flex' }} className='renderContent'>
+                            <div style={{ width: '50%' }}>
+                                {renderContent(templateSchema.children[0])}
+                            </div>
+                            <div style={{ width: '50%' }}>
+                                {renderContent(templateSchema.children[1])}
+                            </div>
+                        </div>
+                        {templateSchema.children.slice(2).map((child) => renderContent(child))}
                     </Form>
                 </Context.Provider>
             </div>

@@ -18,4 +18,9 @@
         border-color: var(--tab-border);
         background-color: var(--panel-background);
     }
+    .renderContent{
+        .ant-collapse-content-box{
+            min-height: 400px;
+        }
+    }
 }
