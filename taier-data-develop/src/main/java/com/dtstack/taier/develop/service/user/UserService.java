@@ -28,6 +28,7 @@ import com.dtstack.taier.dao.domain.User;
 import com.dtstack.taier.dao.dto.UserDTO;
 import com.dtstack.taier.dao.mapper.UserMapper;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -41,6 +42,8 @@ import java.util.stream.Collectors;
 @Service
 public class UserService extends ServiceImpl<UserMapper, User> {
 
+    @Value("${lddp.admin.url}")
+    public String adminUrl;
 
     public String getUserName(Long userId) {
         User user = this.baseMapper.selectById(userId);
@@ -87,8 +90,8 @@ public class UserService extends ServiceImpl<UserMapper, User> {
     public User getUserByToken(String token, String clientId) {
         Map<String, Object> headers = new HashMap<>();
         headers.put("Authorization", "Bearer " + token);
-        headers.put("Clientid", clientId);
-        String result = PoolHttpClient.get("http://localhost:8080/system/user/getInfo", null, headers, true);
+        headers.put("clientid", clientId);
+        String result = PoolHttpClient.get(adminUrl + "/system/user/getInfo", null, headers, true);
         JSONObject data = JSONObject.parseObject(result);
         return userConvert(data);
     }

@@ -49,6 +49,19 @@ export function showLoginModal() {
 }
 
 export default () => {
+
+    const getQueryVariable = () => {
+        const search = window.location.search;
+        let obj = {};
+        if (search) {
+          let arr = search.split("?")[1].split("&");
+          for (let i of arr) {
+            obj[i.split("=")[0]] = i.split("=")[1];  //对数组每项用=分解开，=前为对象属性名，=后为属性值
+          }
+        }
+        return obj
+    };
+
     const [curTenantId] = useState(getTenantId());
     const [isLogin, setLogin] = useState(() => !!getCookie('taier_token'));
     const [isModalVisible, setVisible] = useState(false);
@@ -68,6 +81,27 @@ export default () => {
         return res;
     };
 
+    const usernameInCookie = getCookie('username');
+    if (!usernameInCookie) {
+        const obj = getQueryVariable()
+        const lddpToken = obj?.["lddpToken"];
+        const clientId = obj?.["clientId"];
+    
+        if (lddpToken) {
+            api.loginByLddpToken({"lddpToken": lddpToken, "clientId": clientId})
+            .then((res) => {
+                if (res.code === 1) {
+                    const userId = getCookie('userId');
+                    const defaultTenant = getCookie('tenantId');
+                    setLogin(true);
+                    if (defaultTenant) {
+                        doTenantChange(Number(defaultTenant), true);
+                    } 
+                }
+            })
+            
+        }
+    }  
     const handleOk = () => {
         form.validateFields()
             .then((values) => {

@@ -138,15 +138,14 @@ public class UserController {
         return R.ok(userVOS);
     }
 
-    @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST}, value = "/loginByToken")
-    public void loginByToken(@RequestParam(value = "lddpToken") String lddpToken, @RequestParam(value = "clientId") String clientId, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST}, value = "/loginByLddpToken")
+    public R<String> loginByLddpToken(@RequestParam(value = "lddpToken") String lddpToken, @RequestParam(value = "clientId") String clientId, HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (StringUtils.isBlank(lddpToken)) {
             throw new TaierDefineException("token can not null");
         }
         if (StringUtils.isBlank(clientId)) {
             throw new TaierDefineException("clientId can not null");
         }
-
         User user = userService.getUserByToken(lddpToken, clientId);
 
         if (null == user) {
@@ -161,7 +160,6 @@ public class UserController {
         dtUser.setTenantId(1L);
         dtUser.setTenantName("taier");
         loginService.onAuthenticationSuccess(request, response, dtUser);
-        response.sendRedirect("/");
-
+        return R.ok(dtUser.getUserName());
     }
 }
