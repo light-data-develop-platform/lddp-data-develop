@@ -82,25 +82,33 @@ export default () => {
     };
 
     const usernameInCookie = getCookie('username');
-    if (!usernameInCookie) {
-        const obj = getQueryVariable()
-        const lddpToken = obj?.["lddpToken"];
-        const clientId = obj?.["clientId"];
-    
-        if (lddpToken) {
-            api.loginByLddpToken({"lddpToken": lddpToken, "clientId": clientId})
+    const obj = getQueryVariable()
+    const lddpToken = obj?.["lddpToken"];
+    const clientId = obj?.["clientId"];
+    if (!usernameInCookie && lddpToken) {
+        api.loginByLddpToken({"lddpToken": lddpToken, "clientId": clientId})
+            // .then((res) => {
+            //     if (res.code === 1) {
+            //         return getTenantList();
+            //     }
+            // })
             .then((res) => {
-                if (res.code === 1) {
+                if (res?.code === 1) {
                     const userId = getCookie('userId');
                     const defaultTenant = getCookie('tenantId');
-                    setLogin(true);
+                    // const isValidTenant = (res.data as ITenantProps[]).some(
+                    //     (t) => t.tenantId.toString() === defaultTenant
+                    // );
                     if (defaultTenant) {
                         doTenantChange(Number(defaultTenant), true);
-                    } 
+                    } else {
+                        setLogin(true);
+                    }
                 }
             })
-            
-        }
+            .finally(() => {
+                setLoading(false);
+            });
     }  
     const handleOk = () => {
         form.validateFields()
