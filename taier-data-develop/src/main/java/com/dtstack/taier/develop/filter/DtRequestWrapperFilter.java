@@ -60,6 +60,7 @@ public class DtRequestWrapperFilter extends OncePerRequestFilter {
             "/upload/component/parseKerberos",
             "/upload/component/uploadKerberos",
             "/user/login",
+            "/user/loginByLddpToken",
             "/user/logout",
             "/dataSource/addDs/getPrincipalsWithConf",
             "/dataSource/addDs/addOrUpdateSourceWithKerberos",

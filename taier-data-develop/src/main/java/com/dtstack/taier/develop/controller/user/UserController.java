@@ -36,15 +36,18 @@ import com.dtstack.taier.pluginapi.util.MD5Util;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -55,6 +58,9 @@ import java.util.List;
 @RequestMapping("/user")
 @Api(value = "/user", tags = {"用户接口"})
 public class UserController {
+
+    @Value("${lddp.develop.redirect.url}")
+    public String redirectUrl;
 
     @Autowired
     private LoginService loginService;
@@ -139,7 +145,7 @@ public class UserController {
     }
 
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST}, value = "/loginByLddpToken")
-    public R<String> loginByLddpToken(@RequestParam(value = "lddpToken") String lddpToken, @RequestParam(value = "clientId") String clientId, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void loginByLddpToken(@RequestParam(value = "lddpToken") String lddpToken, @RequestParam(value = "clientId") String clientId, HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (StringUtils.isBlank(lddpToken)) {
             throw new TaierDefineException("token can not null");
         }
@@ -160,6 +166,6 @@ public class UserController {
         dtUser.setTenantId(1L);
         dtUser.setTenantName("taier");
         loginService.onAuthenticationSuccess(request, response, dtUser);
-        return R.ok(dtUser.getUserName());
+        response.sendRedirect(redirectUrl);
     }
 }

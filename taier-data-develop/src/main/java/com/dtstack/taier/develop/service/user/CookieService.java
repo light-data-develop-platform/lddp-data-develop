@@ -124,7 +124,7 @@ public class CookieService {
             } else {
                 cookie = ResponseCookie.from(cookieName, URLEncoder.encode(cookieValue.toString(), "UTF-8"))
                         .httpOnly(false)
-                        .domain(decisionCookieDomain(request))
+                        // .domain(decisionCookieDomain(request))
                         .path("/")
                         .maxAge(SESSION_TIMEOUT)
                         .build();
