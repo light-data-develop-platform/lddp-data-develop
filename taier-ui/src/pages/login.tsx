@@ -49,21 +49,8 @@ export function showLoginModal() {
 }
 
 export default () => {
-
-    const getQueryVariable = () => {
-        const search = window.location.search;
-        let obj = {};
-        if (search) {
-          let arr = search.split("?")[1].split("&");
-          for (let i of arr) {
-            obj[i.split("=")[0]] = i.split("=")[1];  //对数组每项用=分解开，=前为对象属性名，=后为属性值
-          }
-        }
-        return obj
-    };
-
     const [curTenantId] = useState(getTenantId());
-    const [isLogin, setLogin] = useState(() => !!getCookie('taier_token'));
+    const [isLogin, setLogin] = useState(() => !!getCookie('token'));
     const [isModalVisible, setVisible] = useState(false);
     const [submitLoading, setLoading] = useState(false);
     const [form] = Form.useForm<IFormField>();
@@ -81,35 +68,6 @@ export default () => {
         return res;
     };
 
-    const usernameInCookie = getCookie('username');
-    const obj = getQueryVariable()
-    const lddpToken = obj?.["lddpToken"];
-    const clientId = obj?.["clientId"];
-    if (!usernameInCookie && lddpToken) {
-        api.loginByLddpToken({"lddpToken": lddpToken, "clientId": clientId})
-            // .then((res) => {
-            //     if (res.code === 1) {
-            //         return getTenantList();
-            //     }
-            // })
-            .then((res) => {
-                if (res?.code === 1) {
-                    const userId = getCookie('userId');
-                    const defaultTenant = getCookie('tenantId');
-                    // const isValidTenant = (res.data as ITenantProps[]).some(
-                    //     (t) => t.tenantId.toString() === defaultTenant
-                    // );
-                    if (defaultTenant) {
-                        doTenantChange(Number(defaultTenant), true);
-                    } else {
-                        setLogin(true);
-                    }
-                }
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-    }  
     const handleOk = () => {
         form.validateFields()
             .then((values) => {
