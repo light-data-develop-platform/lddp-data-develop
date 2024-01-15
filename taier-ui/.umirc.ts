@@ -5,8 +5,8 @@ export default defineConfig({
     title: 'Taier | DTStack',
     favicon: 'images/favicon.png',
     hash: true,
-    publicPath: './',
-    base: './',
+    publicPath: '/lddp-data-develop-fe/',
+    base: '/lddp-data-develop-fe/',
     ignoreMomentLocale: true,
     targets: {
         ios: false,
